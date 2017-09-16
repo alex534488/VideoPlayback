@@ -185,11 +185,13 @@ void OnChar(HWND hwnd, wchar_t c)
 		{
 			g_pPlayer->Forward();
 		}
+<<<<<<< HEAD
 	case L'l':
 	case L'L': // LOAD AGAIN
 		g_pPlayer->Stop();
 		OnFileOpen(hwnd,g_pPlayer->fileNameBackup);
 		g_pPlayer->Play();
+=======
 	case L'r':
 	case L'R':
 		if (g_pPlayer->State() == STATE_RUNNING ||
@@ -198,6 +200,7 @@ void OnChar(HWND hwnd, wchar_t c)
 		{
 			g_pPlayer->ReStart();
 		}
+>>>>>>> c1591f6d8d4124fdbfd626714725a4839e4e859c
 	}
 }
 

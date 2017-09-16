@@ -190,14 +190,6 @@ void OnChar(HWND hwnd, wchar_t c)
 		g_pPlayer->Stop();
 		OnFileOpen(hwnd,g_pPlayer->fileNameBackup);
 		g_pPlayer->Play();
-	case L'r':
-	case L'R':
-		if (g_pPlayer->State() == STATE_RUNNING ||
-			g_pPlayer->State() == STATE_PAUSED ||
-			g_pPlayer->State() == STATE_STOPPED)
-		{
-			g_pPlayer->ReStart();
-		}
 	}
 }
 
