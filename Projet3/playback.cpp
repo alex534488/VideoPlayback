@@ -150,18 +150,8 @@ HRESULT DShowPlayer::Forward()
 		return VFW_E_WRONG_STATE;
 	}
 
-	DWORD dwCaps = 0;
-	hr = m_pSeeking->GetCapabilities(&dwCaps);
+	hr = m_pSeeking->SetRate(2.0);
 
-	if (dwCaps & AM_SEEKING_CanSeekForwards)
-		HRESULT hr = m_pSeeking->SetRate(2.0);
-	else
-		return hr;
-
-	if (SUCCEEDED(hr))
-	{
-		m_state = STATE_STOPPED;
-	}
 	return hr;
 }
 

@@ -190,17 +190,20 @@ void OnChar(HWND hwnd, wchar_t c)
 	case L'Q':
 		delete g_pPlayer;
 		PostQuitMessage(0);
+		break;
 	case L'a':
 	case L'A':
 		if (g_pPlayer->State() == STATE_RUNNING)
 		{
 			g_pPlayer->Forward();
 		}
+		break;
 	case L'l':
 	case L'L': // LOAD AGAIN
 		g_pPlayer->Stop();
-		OnFileOpen(hwnd,g_pPlayer->fileNameBackup);
+		OnFileOpen(hwnd, g_pPlayer->fileNameBackup);
 		g_pPlayer->Play();
+		break;
 	case L'r':
 	case L'R':
 		if (g_pPlayer->State() == STATE_RUNNING ||
@@ -213,6 +216,7 @@ void OnChar(HWND hwnd, wchar_t c)
 				g_pPlayer->Play();
 			}
 		}
+		break;
 	}
 }
 
