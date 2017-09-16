@@ -19,6 +19,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void CALLBACK OnGraphEvent(HWND hwnd, long eventCode, LONG_PTR param1, LONG_PTR param2);
 void OnChar(HWND hwnd, wchar_t c);
 void OnFileOpen(HWND hwnd);
+void OnFileOpen(HWND hwnd, WCHAR szFileName[MAX_PATH]);
 void OnPaint(HWND hwnd);
 void OnSize(HWND hwnd);
 void NotifyError(HWND hwnd, PCWSTR pszMessage);
@@ -184,12 +185,11 @@ void OnChar(HWND hwnd, wchar_t c)
 		{
 			g_pPlayer->Forward();
 		}
-	case L'r':
-	case L'R':
-		if (g_pPlayer->State() == STATE_RUNNING)
-		{
-			g_pPlayer->ReStart();
-		}
+	case L'l':
+	case L'L': // LOAD AGAIN
+		g_pPlayer->Stop();
+		OnFileOpen(hwnd,g_pPlayer->fileNameBackup);
+		g_pPlayer->Play();
 	}
 }
 
@@ -214,6 +214,7 @@ void OnFileOpen(HWND hwnd)
 	if (GetOpenFileName(&ofn))
 	{
 		hr = g_pPlayer->OpenFile(szFileName);
+		g_pPlayer->SetFileName(szFileName);
 
 		InvalidateRect(hwnd, NULL, FALSE);
 
@@ -227,6 +228,25 @@ void OnFileOpen(HWND hwnd)
 		{
 			NotifyError(hwnd, TEXT("Cannot open this file."));
 		}
+	}
+}
+
+void OnFileOpen(HWND hwnd, WCHAR szFileName[MAX_PATH])
+{
+	HRESULT hr = g_pPlayer->OpenFile(szFileName);
+	g_pPlayer->SetFileName(szFileName);
+
+	InvalidateRect(hwnd, NULL, FALSE);
+
+	if (SUCCEEDED(hr))
+	{
+		// If this file has a video stream, notify the video renderer 
+		// about the size of the destination rectangle.
+		OnSize(hwnd);
+	}
+	else
+	{
+		NotifyError(hwnd, TEXT("Cannot open this file."));
 	}
 }
 

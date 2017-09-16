@@ -199,6 +199,14 @@ HRESULT DShowPlayer::ReStart()
 	return hr;
 }
 
+void DShowPlayer::SetFileName(WCHAR fileName[MAX_PATH])
+{
+	for (int i = 0; i < MAX_PATH; i++)
+	{
+		fileNameBackup[i] = fileName[i];
+	}
+}
+
 // EVR/VMR functionality
 
 BOOL DShowPlayer::HasVideo() const
