@@ -168,7 +168,7 @@ HRESULT DShowPlayer::Forward()
 HRESULT DShowPlayer::ReStart()
 {
 	HRESULT hr = VFW_E_CANNOT_RENDER;
-	if (m_state != STATE_RUNNING && m_state != STATE_PAUSED)
+	if (m_state != STATE_RUNNING && m_state != STATE_PAUSED && m_state != STATE_STOPPED)
 	{
 		return VFW_E_WRONG_STATE;
 	}
@@ -176,25 +176,24 @@ HRESULT DShowPlayer::ReStart()
 	DWORD dwCaps = 0;
 	hr = m_pSeeking->GetCapabilities(&dwCaps);
 
-	if (dwCaps & AM_SEEKING_CanGetCurrentPos) 
+	if (dwCaps & AM_SEEKING_CanSeekAbsolute)
 	{
 		REFERENCE_TIME start = 0;
-		REFERENCE_TIME current = 0;
-		m_pSeeking->GetCurrentPosition(&current);
 
 		hr = m_pSeeking->SetPositions(
-			&current, AM_SEEKING_AbsolutePositioning,
-			&start, AM_SEEKING_AbsolutePositioning
-			);
+			&start, AM_SEEKING_AbsolutePositioning,
+			NULL, AM_SEEKING_NoPositioning
+		);
 	}
 	else
 		return hr;
-	
-	Pause();
 
 	if (SUCCEEDED(hr))
 	{
-		m_state = STATE_STOPPED;
+		if (m_state == STATE_RUNNING)
+			m_state = STATE_RUNNING;
+		else
+			m_state = STATE_PAUSED;
 	}
 	return hr;
 }

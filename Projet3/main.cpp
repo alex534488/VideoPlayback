@@ -186,7 +186,9 @@ void OnChar(HWND hwnd, wchar_t c)
 		}
 	case L'r':
 	case L'R':
-		if (g_pPlayer->State() == STATE_RUNNING)
+		if (g_pPlayer->State() == STATE_RUNNING ||
+			g_pPlayer->State() == STATE_PAUSED ||
+			g_pPlayer->State() == STATE_STOPPED)
 		{
 			g_pPlayer->ReStart();
 		}
