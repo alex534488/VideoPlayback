@@ -15,7 +15,7 @@ enum PlaybackState
 	STATE_NO_GRAPH,
 	STATE_RUNNING,
 	STATE_PAUSED,
-	STATE_STOPPED,
+	STATE_STOPPED
 };
 
 const UINT WM_GRAPH_EVENT = WM_APP + 1;
@@ -24,6 +24,7 @@ typedef void (CALLBACK *GraphEventFN)(HWND hwnd, long eventCode, LONG_PTR param1
 
 class DShowPlayer
 {
+
 public:
 	DShowPlayer(HWND hwnd);
 	~DShowPlayer();
@@ -35,6 +36,8 @@ public:
 	HRESULT Play();
 	HRESULT Pause();
 	HRESULT Stop();
+	HRESULT Forward();
+	HRESULT ReStart();
 
 	BOOL    HasVideo() const;
 	HRESULT UpdateVideoWindow(const LPRECT prc);
@@ -42,6 +45,7 @@ public:
 	HRESULT DisplayModeChanged();
 
 	HRESULT HandleGraphEvent(GraphEventFN pfnOnGraphEvent);
+
 
 private:
 	HRESULT InitializeGraph();
@@ -57,4 +61,5 @@ private:
 	IMediaControl   *m_pControl;
 	IMediaEventEx   *m_pEvent;
 	CVideoRenderer  *m_pVideo;
+	IMediaSeeking   *m_pSeeking;
 };

@@ -178,6 +178,18 @@ void OnChar(HWND hwnd, wchar_t c)
 	case L'Q':
 		delete g_pPlayer;
 		PostQuitMessage(0);
+	case L'a':
+	case L'A':
+		if (g_pPlayer->State() == STATE_RUNNING)
+		{
+			g_pPlayer->Forward();
+		}
+	case L'r':
+	case L'R':
+		if (g_pPlayer->State() == STATE_RUNNING)
+		{
+			g_pPlayer->ReStart();
+		}
 	}
 }
 

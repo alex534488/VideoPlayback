@@ -11,13 +11,16 @@
 #include "playback.h"
 #include "video.h"
 
+#define ONE_SECOND 10000000
+
 DShowPlayer::DShowPlayer(HWND hwnd) :
 	m_state(STATE_NO_GRAPH),
 	m_hwnd(hwnd),
 	m_pGraph(NULL),
 	m_pControl(NULL),
 	m_pEvent(NULL),
-	m_pVideo(NULL)
+	m_pVideo(NULL),
+	m_pSeeking(NULL)
 {
 
 }
@@ -139,6 +142,62 @@ HRESULT DShowPlayer::Stop()
 	return hr;
 }
 
+HRESULT DShowPlayer::Forward()
+{
+	HRESULT hr = VFW_E_CANNOT_RENDER;
+	if (m_state != STATE_RUNNING && m_state != STATE_PAUSED)
+	{
+		return VFW_E_WRONG_STATE;
+	}
+
+	DWORD dwCaps = 0;
+	hr = m_pSeeking->GetCapabilities(&dwCaps);
+
+	if (dwCaps & AM_SEEKING_CanSeekForwards)
+		HRESULT hr = m_pSeeking->SetRate(2.0);
+	else
+		return hr;
+
+	if (SUCCEEDED(hr))
+	{
+		m_state = STATE_STOPPED;
+	}
+	return hr;
+}
+
+HRESULT DShowPlayer::ReStart()
+{
+	HRESULT hr = VFW_E_CANNOT_RENDER;
+	if (m_state != STATE_RUNNING && m_state != STATE_PAUSED)
+	{
+		return VFW_E_WRONG_STATE;
+	}
+
+	DWORD dwCaps = 0;
+	hr = m_pSeeking->GetCapabilities(&dwCaps);
+
+	if (dwCaps & AM_SEEKING_CanGetCurrentPos) 
+	{
+		REFERENCE_TIME start = 0;
+		REFERENCE_TIME current = 0;
+		m_pSeeking->GetCurrentPosition(&current);
+
+		hr = m_pSeeking->SetPositions(
+			&current, AM_SEEKING_AbsolutePositioning,
+			&start, AM_SEEKING_AbsolutePositioning
+			);
+	}
+	else
+		return hr;
+	
+	Pause();
+
+	if (SUCCEEDED(hr))
+	{
+		m_state = STATE_STOPPED;
+	}
+	return hr;
+}
 
 // EVR/VMR functionality
 
@@ -215,6 +274,12 @@ HRESULT DShowPlayer::InitializeGraph()
 	}
 
 	hr = m_pGraph->QueryInterface(IID_PPV_ARGS(&m_pEvent));
+	if (FAILED(hr))
+	{
+		goto done;
+	}
+
+	hr = m_pGraph->QueryInterface(IID_PPV_ARGS(&m_pSeeking));
 	if (FAILED(hr))
 	{
 		goto done;
