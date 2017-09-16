@@ -39,6 +39,8 @@ public:
 	HRESULT Forward();
 	HRESULT ReStart();
 
+	void SetFileName(WCHAR fileName[MAX_PATH]);
+
 	BOOL    HasVideo() const;
 	HRESULT UpdateVideoWindow(const LPRECT prc);
 	HRESULT Repaint(HDC hdc);
@@ -46,6 +48,7 @@ public:
 
 	HRESULT HandleGraphEvent(GraphEventFN pfnOnGraphEvent);
 
+	WCHAR fileNameBackup[MAX_PATH];
 
 private:
 	HRESULT InitializeGraph();
