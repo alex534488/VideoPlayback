@@ -11,6 +11,8 @@
 #include <dshow.h>
 #include "playback.h"
 
+#define SUCCEEDED(hr)   (((HRESULT)(hr)) >= 0)
+
 #pragma comment(lib, "strmiids")
 
 DShowPlayer *g_pPlayer = NULL;
@@ -163,15 +165,24 @@ void OnChar(HWND hwnd, wchar_t c)
 		OnFileOpen(hwnd);
 		break;
 
+	case L' ':
 	case L'p':
 	case L'P':
 		if (g_pPlayer->State() == STATE_RUNNING)
 		{
 			g_pPlayer->Pause();
 		}
-		else
+		else if (g_pPlayer->State() == STATE_PAUSED)
 		{
 			g_pPlayer->Play();
+		}
+		else if (g_pPlayer->State() == STATE_STOPPED)
+		{
+			HRESULT hr = g_pPlayer->ReStart();
+			if (SUCCEEDED(hr))
+			{
+				g_pPlayer->Play();
+			}
 		}
 		break;
 	case L'q':
@@ -190,7 +201,11 @@ void OnChar(HWND hwnd, wchar_t c)
 			g_pPlayer->State() == STATE_PAUSED ||
 			g_pPlayer->State() == STATE_STOPPED)
 		{
-			g_pPlayer->ReStart();
+			HRESULT hr = g_pPlayer->ReStart();
+			if (SUCCEEDED(hr))
+			{
+				g_pPlayer->Play();
+			}
 		}
 	}
 }
