@@ -174,6 +174,10 @@ void OnChar(HWND hwnd, wchar_t c)
 			g_pPlayer->Play();
 		}
 		break;
+	case L'q':
+	case L'Q':
+		delete g_pPlayer;
+		PostQuitMessage(0);
 	}
 }
 
