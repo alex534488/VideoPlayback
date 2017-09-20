@@ -77,6 +77,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_CREATE:
 		g_pPlayer = new (std::nothrow) DShowPlayer(hwnd);
+		g_pPlayer->SetForwarding(false);
 		if (g_pPlayer == NULL)
 		{
 			return -1;
@@ -163,9 +164,9 @@ void OnChar(HWND hwnd, wchar_t c)
 	{
 	case L'o':
 	case L'O':
+		g_pPlayer->StopForward();
 		OnFileOpen(hwnd);
 		break;
-
 	case L' ':
 	case L'p':
 	case L'P':
@@ -190,19 +191,34 @@ void OnChar(HWND hwnd, wchar_t c)
 	case L'Q':
 		delete g_pPlayer;
 		PostQuitMessage(0);
+		break;
 	case L'a':
 	case L'A':
-		if (g_pPlayer->State() == STATE_RUNNING)
+		if (g_pPlayer->isForwarding) 
 		{
-			g_pPlayer->Forward();
+			if (g_pPlayer->State() == STATE_RUNNING)
+			{
+				g_pPlayer->StopForward();
+			}
 		}
+		else 
+		{
+			if (g_pPlayer->State() == STATE_RUNNING)
+			{
+				g_pPlayer->Forward();
+			}
+		}
+		break;
 	case L'l':
 	case L'L': // LOAD AGAIN
+		g_pPlayer->StopForward();
 		g_pPlayer->Stop();
 		OnFileOpen(hwnd,g_pPlayer->fileNameBackup);
 		g_pPlayer->Play();
+		break;
 	case L'r':
 	case L'R':
+		g_pPlayer->StopForward();
 		if (g_pPlayer->State() == STATE_RUNNING ||
 			g_pPlayer->State() == STATE_PAUSED ||
 			g_pPlayer->State() == STATE_STOPPED)
@@ -213,6 +229,7 @@ void OnChar(HWND hwnd, wchar_t c)
 				g_pPlayer->Play();
 			}
 		}
+		break;
 	}
 }
 

@@ -37,6 +37,7 @@ public:
 	HRESULT Pause();
 	HRESULT Stop();
 	HRESULT Forward();
+	HRESULT StopForward();
 	HRESULT ReStart();
 
 	void SetFileName(WCHAR fileName[MAX_PATH]);
@@ -46,9 +47,12 @@ public:
 	HRESULT Repaint(HDC hdc);
 	HRESULT DisplayModeChanged();
 
+	void SetForwarding(bool value);
+
 	HRESULT HandleGraphEvent(GraphEventFN pfnOnGraphEvent);
 
 	WCHAR fileNameBackup[MAX_PATH];
+	bool isForwarding;
 
 private:
 	HRESULT InitializeGraph();

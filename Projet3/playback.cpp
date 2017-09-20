@@ -135,6 +135,7 @@ HRESULT DShowPlayer::Stop()
 	}
 
 	HRESULT hr = m_pControl->Stop();
+	StopForward();
 	if (SUCCEEDED(hr))
 	{
 		m_state = STATE_STOPPED;
@@ -150,19 +151,29 @@ HRESULT DShowPlayer::Forward()
 		return VFW_E_WRONG_STATE;
 	}
 
-	DWORD dwCaps = 0;
-	hr = m_pSeeking->GetCapabilities(&dwCaps);
+	hr = m_pSeeking->SetRate(2.0);
+	SetForwarding(true);
 
-	if (dwCaps & AM_SEEKING_CanSeekForwards)
-		HRESULT hr = m_pSeeking->SetRate(2.0);
-	else
-		return hr;
-
-	if (SUCCEEDED(hr))
-	{
-		m_state = STATE_STOPPED;
-	}
 	return hr;
+}
+
+HRESULT DShowPlayer::StopForward()
+{
+	HRESULT hr = VFW_E_CANNOT_RENDER;
+	if (m_state != STATE_RUNNING && m_state != STATE_PAUSED)
+	{
+		return VFW_E_WRONG_STATE;
+	}
+
+	hr = m_pSeeking->SetRate(1.0);
+	SetForwarding(false);
+
+	return hr;
+}
+
+void DShowPlayer::SetForwarding(bool value)
+{
+	isForwarding = value;
 }
 
 HRESULT DShowPlayer::ReStart()
