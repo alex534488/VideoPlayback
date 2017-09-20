@@ -213,7 +213,7 @@ void OnChar(HWND hwnd, wchar_t c)
 	case L'L': // LOAD AGAIN
 		g_pPlayer->StopForward();
 		g_pPlayer->Stop();
-		OnFileOpen(hwnd,g_pPlayer->fileNameBackup);
+		OnFileOpen(hwnd, g_pPlayer->fileNameBackup);
 		g_pPlayer->Play();
 		break;
 	case L'r':
